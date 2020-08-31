@@ -22,8 +22,8 @@ class Server:
             ]
         )
 
-    def run(self, on: str, port: int) -> None:
-        run(self.app, host=on, port=port)
+    def run(self) -> None:
+        run(self.app, host="0.0.0.0", port=80)
 
     async def acceptor(self, request: Request) -> Union[Response, PlainTextResponse]:
         try:

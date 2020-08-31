@@ -11,7 +11,7 @@ from pyngrok import ngrok
 class Listener:
     def __init__(self, token: str, address: Optional[str] = None) -> None:
         self.__address = address or ngrok.connect()
-        self.__b64_encoded_key: str = ""
+        self.__b64_encoded_key: Optional[str] = None
 
         self.event = HandlingProvider()
         self.api = api.API(token)
@@ -25,8 +25,8 @@ class Listener:
 
         self.__b64_encoded_key = api.key.change_key(self.api, hook.hookId)
 
-    def run(self, on: str, port: int) -> None:
+    def run(self) -> None:
         if not self.__b64_encoded_key:
             raise Exception("Base64-encoded key not found")
 
-        Server(self.__b64_encoded_key, self.event).run(on, port)
+        Server(self.__b64_encoded_key, self.event).run()

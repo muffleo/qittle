@@ -6,11 +6,14 @@ listener = Listener(
 )  # Instantiate listener with given address and token
 
 
-@listener.event()
-async def _(payment: Payment):
-    """This handler catches all hooks"""
+@listener.event(account="+79991234567")
+async def _(payment: Payment) -> None:
+    """
+    This handler catches hooks
+    that match the given parameters.
+    """
     logger.success("Captured payment!")
 
 
 listener.setup()  # Setup hook
-listener.run()  # Run server
+listener.run("0.0.0.0")  # Run server

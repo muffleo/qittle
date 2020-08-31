@@ -38,7 +38,7 @@ class Hook(BaseModel):
     version: str
     hash: Optional[str] = None
 
-    def verify(self, key: str):
+    def verify(self, key: str) -> bool:
         sign_fields = "{currency}|{sum}|{type}|{account}|{txn_id}".format(
             type=self.payment.type, account=self.payment.account,
             sum=self.payment.sum, currency=self.payment.sum.currency,
