@@ -29,7 +29,7 @@ class Listener:
         if not self.__b64_encoded_key:
             raise Exception("Base64-encoded key not found")
 
-        Server(self.__b64_encoded_key, self.event, self.__loop).run()
+        Server(self.__b64_encoded_key, self.event).run()
 
     async def setup(self) -> None:
         try:

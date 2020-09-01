@@ -1,4 +1,3 @@
-from asyncio import AbstractEventLoop
 from json import JSONDecodeError
 from typing import Union
 
@@ -18,14 +17,13 @@ class Server:
             self,
             key: str,
             provider: HandlingProvider,
-            loop: AbstractEventLoop,
     ) -> None:
         self.key = key
         self.provider = provider
         self.app = Starlette(
             routes=[
                 Route("/", self.acceptor, methods=["POST"])
-            ], loop=loop
+            ]
         )
 
     def run(self) -> None:
