@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="qittle",
-    version="1.0.0",
+    version="1.2.1",
     author="exthrempty",
     description="Indispensable solution for handling QIWI hooks",
     url="https://github.com/exthrempty/qittle",
