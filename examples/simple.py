@@ -1,16 +1,17 @@
-from qittle import Listener, Payment
+import os
+
+from qittle import Listener, PaymentModel
 from qittle.utils.logger import logger
 
 listener = Listener(
-    "token", address="address"
+    os.getenv("QIWI_TOKEN"), address="address"
 )  # Instantiate listener with given address and token
 
 
 @listener.event()
-async def _(payment: Payment):
+async def simple_handler(_: PaymentModel):
     """This handler catches all hooks"""
     logger.success("Captured payment!")
 
 
-listener.setup()  # Setup hook
-listener.run()  # Run server
+listener.listen()  # Run server

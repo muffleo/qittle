@@ -1,25 +1,31 @@
-from qittle.hook.handler import HandlingProvider
-from qittle.types.payment import Hook
+from asyncio import AbstractEventLoop
+from json import JSONDecodeError
+from typing import Union
 
+from pydantic import ValidationError
 from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, Response
 from starlette.routing import Route
 from uvicorn import run
 
-from typing import Union
-from json import JSONDecodeError
-from pydantic import ValidationError
+from qittle.hook.handler import HandlingProvider
+from qittle.types.responses.payment import HookModel
 
 
 class Server:
-    def __init__(self, key: str, provider: HandlingProvider) -> None:
+    def __init__(
+            self,
+            key: str,
+            provider: HandlingProvider,
+            loop: AbstractEventLoop,
+    ) -> None:
         self.key = key
         self.provider = provider
         self.app = Starlette(
             routes=[
                 Route("/", self.acceptor, methods=["POST"])
-            ]
+            ], loop=loop
         )
 
     def run(self) -> None:
@@ -27,7 +33,7 @@ class Server:
 
     async def acceptor(self, request: Request) -> Union[Response, PlainTextResponse]:
         try:
-            hook = Hook(**await request.json())
+            hook = HookModel(**await request.json())
         except (JSONDecodeError, ValidationError):
             return Response(status_code=500)
 

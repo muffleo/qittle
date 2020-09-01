@@ -16,11 +16,14 @@ logger.remove()
 logger.add(
     sys.stdout,
     colorize=True,
-    format="<level><yellow>Qittle</yellow> | {message}</level> (<magenta>{time:HH:MM:ss}</magenta>)",
+    format="<level><magenta>Qittle</magenta> | {message}</level> (<blue>{time:HH:MM:ss}</blue>)",
     filter=LoggerLevel("INFO"),
     level=0,
     enqueue=False,
 )
 logger.level("INFO", color="<white>")
-logger.level("ERROR", color="<red>")
 logger.level("SUCCESS", color="<green>")
+logger.level("WARNING", color="<yellow>")
+logger.level("ERROR", color="<red>")
+
+

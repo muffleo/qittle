@@ -1,32 +1,41 @@
-from qittle import api
-from qittle.utils.exceptions import QiwiError
-
-from qittle.hook.server import Server
-from qittle.hook.handler import HandlingProvider
-
+from asyncio import AbstractEventLoop, get_event_loop
 from typing import Optional
+
 from pyngrok import ngrok
+
+from qittle.api import API
+from qittle.hook.handler import HandlingProvider
+from qittle.hook.server import Server
+from qittle.utils.exceptions import QiwiError
 
 
 class Listener:
-    def __init__(self, token: str, address: Optional[str] = None) -> None:
+    def __init__(
+            self,
+            token: str,
+            address: Optional[str] = None,
+            loop: Optional[AbstractEventLoop] = None,
+    ) -> None:
+        self.__loop = loop or get_event_loop()
         self.__address = address or ngrok.connect()
         self.__b64_encoded_key: Optional[str] = None
 
         self.event = HandlingProvider()
-        self.api = api.API(token)
+        self.api = API(token)
 
-    def setup(self) -> None:
-        try:
-            hook = api.hook.get_hook(self.api)
-        except QiwiError:
-            api.hook.delete_hook(self.api, hid=hook.hookId)
-            hook = api.hook.register_hook(self.api, server=self.__address)
+    def listen(self) -> None:
+        self.__loop.run_until_complete(self.setup())
 
-        self.__b64_encoded_key = api.key.change_key(self.api, hook.hookId)
-
-    def run(self) -> None:
         if not self.__b64_encoded_key:
             raise Exception("Base64-encoded key not found")
 
-        Server(self.__b64_encoded_key, self.event).run()
+        Server(self.__b64_encoded_key, self.event, self.__loop).run()
+
+    async def setup(self) -> None:
+        try:
+            hook = await self.api.hook.get()
+        except QiwiError:
+            await self.api.hook.delete(hook.hookId)
+            hook = await self.api.hook.register(self.__address)
+
+        self.__b64_encoded_key = await self.api.key.change(hook.hookId)

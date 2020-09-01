@@ -1,13 +1,15 @@
-from qittle import Listener, Payment
+import os
+
+from qittle import Listener, PaymentModel
 from qittle.utils.logger import logger
 
 listener = Listener(
-    "token", address="address"
+    os.getenv("QIWI_TOKEN"), address="address"
 )  # Instantiate listener with given address and token
 
 
 @listener.event(account="+79991234567")
-async def _(payment: Payment) -> None:
+async def handler_with_rules(_: PaymentModel) -> None:
     """
     This handler catches hooks
     that match the given parameters.
@@ -15,5 +17,4 @@ async def _(payment: Payment) -> None:
     logger.success("Captured payment!")
 
 
-listener.setup()  # Setup hook
-listener.run("0.0.0.0")  # Run server
+listener.listen()  # Run server

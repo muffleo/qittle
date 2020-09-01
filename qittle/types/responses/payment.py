@@ -1,27 +1,27 @@
-from typing import Optional
-from pydantic import BaseModel
-from datetime import datetime
-
 import base64
-import hmac
 import hashlib
+import hmac
+from datetime import datetime
+from typing import Optional
+
+from pydantic import BaseModel
 
 
-class Sum(BaseModel):
+class SumModel(BaseModel):
     amount: float
     currency: int
 
 
-class Payment(BaseModel):
+class PaymentModel(BaseModel):
     type: str
     status: str
     account: str
     provider: int
     date: datetime
     signFields: str
-    sum: Sum
-    total: Sum
-    commission: Optional[Sum]
+    sum: SumModel
+    total: SumModel
+    commission: Optional[SumModel]
 
     txnId: str
     personId: int
@@ -30,10 +30,10 @@ class Payment(BaseModel):
     errorCode: Optional[str] = None
 
 
-class Hook(BaseModel):
+class HookModel(BaseModel):
     hookId: str
     messageId: Optional[str] = None
-    payment: Optional[Payment] = None
+    payment: Optional[PaymentModel] = None
     test: bool
     version: str
     hash: Optional[str] = None

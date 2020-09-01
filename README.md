@@ -15,17 +15,16 @@
 ### Пример
 В этом примере рассмотрим безусловную обработку всех поступающих уведомлений. Посмотрите, как это просто:
 ```python
-from qittle import Listener, Payment
+from qittle import Listener, PaymentModel
 from qittle.utils.logger import logger
 
 listener = Listener("token", address="address")
 
 @listener.event()
-async def _(payment: Payment):
+async def simple_handler(payment: PaymentModel):
     logger.success("Captured payment!")
 
-listener.setup()
-listener.run()
+listener.listen()
 ```
 _Если вы не укажете адрес, на который QIWI будет отправлять обновления, Qittle автоматически создаст ngrok-туннель для Вашего удобства!_
 

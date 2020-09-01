@@ -1,26 +1,42 @@
-from http import HTTPStatus
-from qittle.http import HTTP
-from qittle.utils import QiwiError
+import typing
+
+from qittle.api.abc import ABCAPI
+from qittle.http import (
+    ABCSessionManager,
+    SessionManager,
+    AiohttpClient
+)
+from qittle.types.categories import APICategories
 
 
-class API:
-    def __init__(self, token: str) -> None:
+class API(ABCAPI, APICategories):
+    API_URL = "https://edge.qiwi.com/"
+
+    def __init__(
+            self,
+            token: str,
+            session_manager: typing.Optional[SessionManager] = None,
+    ) -> None:
         self.token = token
+        self.http: ABCSessionManager = session_manager or SessionManager(AiohttpClient)
 
-        self.http = HTTP()
-        self._url = "https://edge.qiwi.com/"
+    async def request(
+            self,
+            request_method: str,
+            api_method: str,
+            data: dict,
+    ) -> dict:
+        async with self.http as session:
+            response = await session.request_json(
+                request_method,
+                url=self.API_URL + api_method,
+                data=data, headers={
+                    "Authorization": f"Bearer {self.token}"
+                }
+            )
 
-    def request(self, method: str, **params) -> dict:
-        request_method, api_path = method.split()
+            return response
 
-        response = self.http.request(
-            url=self._url + api_path,
-            params=params,
-            method=request_method,
-            headers={"Authorization": f"Bearer {self.token}"},
-        )
-
-        if response.status_code != 200:
-            raise QiwiError(f"Abnormal status code: {response.status_code}")
-
-        return response.json()
+    @property
+    def instance(self) -> "API":
+        return self

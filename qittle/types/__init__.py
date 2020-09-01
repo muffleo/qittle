@@ -1,2 +1,2 @@
-from .hook import HookDescription, Response
-from .key import Key
+from qittle.types.responses import hook
+from qittle.types.responses import key
