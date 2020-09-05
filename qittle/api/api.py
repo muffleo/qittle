@@ -1,4 +1,4 @@
-import typing
+import typing, json
 
 from qittle.api.abc import ABCAPI
 from qittle.http import (
@@ -7,6 +7,7 @@ from qittle.http import (
     AiohttpClient
 )
 from qittle.types.categories import APICategories
+from qittle.utils.exceptions import QiwiError
 
 
 class API(ABCAPI, APICategories):
@@ -24,16 +25,24 @@ class API(ABCAPI, APICategories):
             self,
             request_method: str,
             api_method: str,
-            data: dict,
-    ) -> dict:
+            data: typing.Optional[dict] = None,
+    ) -> typing.Union[dict, None]:
         async with self.http as session:
-            response = await session.request_json(
+            response = await session.request_text(
                 request_method,
                 url=self.API_URL + api_method,
-                data=data, headers={
+                data=data or {}, headers={
                     "Authorization": f"Bearer {self.token}"
                 }
             )
+
+            try:
+                response = json.loads(response)
+            except json.JSONDecodeError:
+                return
+
+            if "errorCode" in response:
+                return
 
             return response
 
