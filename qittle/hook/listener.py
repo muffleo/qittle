@@ -32,10 +32,9 @@ class Listener:
         Server(self.__b64_encoded_key, self.event).run()
 
     async def setup(self) -> None:
-        try:
-            hook = await self.api.hook.get()
-        except QiwiError:
+        hook = await self.api.hook.get()
+        if hook:
             await self.api.hook.delete(hook.hookId)
-            hook = await self.api.hook.register(self.__address)
-
+            
+        hook = await self.api.hook.register(self.__address)
         self.__b64_encoded_key = await self.api.key.change(hook.hookId)
