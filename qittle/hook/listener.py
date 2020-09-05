@@ -16,15 +16,15 @@ class Listener:
             address: Optional[str] = None,
             loop: Optional[AbstractEventLoop] = None,
     ) -> None:
-        self.__loop = loop or get_event_loop()
-        self.__address = address or ngrok.connect()
+        self.loop = loop or get_event_loop()
+        self.address = address or ngrok.connect()
         self.__b64_encoded_key: Optional[str] = None
 
         self.event = HandlingProvider()
         self.api = API(token)
 
     def listen(self) -> None:
-        self.__loop.run_until_complete(self.setup())
+        self.loop.run_until_complete(self.setup())
 
         if not self.__b64_encoded_key:
             raise Exception("Base64-encoded key not found")
@@ -33,8 +33,9 @@ class Listener:
 
     async def setup(self) -> None:
         hook = await self.api.hook.get()
+
         if hook:
             await self.api.hook.delete(hook.hookId)
-            
-        hook = await self.api.hook.register(self.__address)
+
+        hook = await self.api.hook.register(self.address)
         self.__b64_encoded_key = await self.api.key.change(hook.hookId)
