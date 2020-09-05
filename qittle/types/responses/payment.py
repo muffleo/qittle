@@ -1,14 +1,14 @@
 import base64
 import hashlib
 import hmac
-from datetime import datetime
-from typing import Optional
+import typing
 
+from datetime import datetime
 from pydantic import BaseModel
 
 
 class SumModel(BaseModel):
-    amount: float
+    amount: typing.Union[int, float]
     currency: int
 
 
@@ -21,34 +21,33 @@ class PaymentModel(BaseModel):
     signFields: str
     sum: SumModel
     total: SumModel
-    commission: Optional[SumModel]
+    commission: typing.Optional[SumModel]
 
     txnId: str
     personId: int
 
-    comment: Optional[str] = None
-    errorCode: Optional[str] = None
+    comment: typing.Optional[str] = None
+    errorCode: typing.Optional[str] = None
 
 
 class HookModel(BaseModel):
     hookId: str
-    messageId: Optional[str] = None
-    payment: Optional[PaymentModel] = None
+    messageId: typing.Optional[str] = None
+    payment: typing.Optional[PaymentModel] = None
     test: bool
     version: str
-    hash: Optional[str] = None
+    hash: typing.Optional[str] = None
 
-    def verify(self, key: str) -> bool:
+    def verify(self, key) -> bool:
         sign_fields = "{currency}|{sum}|{type}|{account}|{txn_id}".format(
             type=self.payment.type, account=self.payment.account,
-            sum=self.payment.sum, currency=self.payment.sum.currency,
+            sum=self.payment.sum.amount, currency=self.payment.sum.currency,
             txn_id=self.payment.txnId,
         )
 
-        webhook_key = base64.b64decode(bytes(key, 'utf-8'))
+        webhook_key = base64.b64decode(bytes(key.key, 'utf-8'))
         payment_hash = hmac.new(
             key=webhook_key, msg=sign_fields.encode('utf-8'),
             digestmod=hashlib.sha256
         ).hexdigest()
-
         return self.hash == payment_hash
