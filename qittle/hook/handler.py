@@ -34,3 +34,4 @@ class HandlingProvider:
                 {**payment.dict(), **handler["payload"]} == payment.dict()
             ):
                 await handler["function"](payment)
+                break
