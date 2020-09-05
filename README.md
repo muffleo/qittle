@@ -4,10 +4,6 @@
 ### Установка
 1) **Из GitHub**:
     ```sh
-   git clone https://USERNAME:PASSWORD@github.com/krilifon/qittle
-   cd qittle
-   pip install .
-   
    pip install -U https://github.com/krilifon/qittle/archive/master.zip
    ```
    
