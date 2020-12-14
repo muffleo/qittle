@@ -6,7 +6,6 @@ from pyngrok import ngrok
 from qittle.api import API
 from qittle.hook.handler import HandlingProvider
 from qittle.hook.server import Server
-from qittle.utils.exceptions import QiwiError
 
 
 class Listener:

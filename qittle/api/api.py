@@ -7,7 +7,6 @@ from qittle.http import (
     AiohttpClient
 )
 from qittle.types.categories import APICategories
-from qittle.utils.exceptions import QiwiError
 
 
 class API(ABCAPI, APICategories):

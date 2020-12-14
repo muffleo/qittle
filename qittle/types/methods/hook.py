@@ -6,8 +6,8 @@ class HookCategory(Base):
     async def register(
             self,
             param: str,
-            hookType: int = 1,
-            txnType: str = 2,
+            hook_type: int = 1,
+            txn_type: str = 2,
             **kwargs
     ) -> hook.DescriptionModel:
         params = self.get_set_params(locals())
@@ -32,13 +32,13 @@ class HookCategory(Base):
 
     async def delete(
             self,
-            hookId: str,
+            hook_id: str,
             **kwargs,
     ) -> hook.ResponseModel:
         params = self.get_set_params(locals())
         return hook.ResponseModel(
             **await self.api.request(
-                "DELETE", f"payment-notifier/v1/hooks/{hookId}",
+                "DELETE", f"payment-notifier/v1/hooks/{hook_id}",
                 params
             )
         )
