@@ -4,7 +4,7 @@
 ### Установка
 1) **Из GitHub**:
     ```sh
-   pip install -U https://github.com/krilifon/qittle/archive/master.zip
+   pip install -U https://github.com/muffleo/qittle/archive/master.zip
    ```
    
 ### Преимущества
